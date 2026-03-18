@@ -114,15 +114,6 @@ docker compose -f docker-compose.prod.yml up -d
 
 ---
 
-## 📊 Monitoramento
-
-| Ferramenta | URL (Dev) | Função |
-|------------|-----------|--------|
-| **Prometheus** | `http://localhost:9090` | Métricas do sistema |
-| **Grafana** | `http://localhost:3000` | Painéis visuais |
-
----
-
 ## 🔄 CI/CD
 
 O pipeline GitHub Actions executa o build multi-arquitetura e dispara o webhook do Coolify automaticamente ao fazer push na branch `main`.
