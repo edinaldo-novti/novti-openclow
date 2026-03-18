@@ -47,5 +47,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -fs http://localhost:8080/healthz || exit 1
 
 # Comando de inicialização do Openclaw
-# Garantimos que o diretório de dados existe e copiamos a config da pasta montada
-CMD ["sh", "-c", "mkdir -p /root/.openclaw && cp /root/initial-config/openclaw.json /root/.openclaw/openclaw.json && openclaw gateway --allow-unconfigured"]
+# Configurações são lidas preferencialmente de variáveis de ambiente
+CMD ["openclaw", "gateway", "--allow-unconfigured"]

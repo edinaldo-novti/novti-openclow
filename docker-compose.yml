@@ -15,12 +15,15 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config/openclaw/openclaw.json:/root/.openclaw-config.json:ro
       - openclaw_data:/root/.openclaw
     environment:
       - NODE_ENV=development
       - PORT=${OPENFLOW_PORT:-8080}
-      - OPENCLOW_GATEWAY_TOKEN=${OPENCLOW_GATEWAY_TOKEN}
+      - OPENCLOW_GATEWAY_PORT=${OPENFLOW_PORT:-8080}
+      - OPENCLOW_GATEWAY_BIND=lan
+      - OPENCLOW_GATEWAY_AUTH_MODE=token
+      - OPENCLOW_GATEWAY_AUTH_TOKEN=${OPENCLOW_GATEWAY_TOKEN}
+      - OPENCLOW_GATEWAY_CONTROL_UI_DANGEROUSLY_ALLOW_HOST_HEADER_ORIGIN_FALLBACK=true
       - OPENFLOW_ADMIN_PASSWORD=${OPENFLOW_ADMIN_PASSWORD}
 
     networks:

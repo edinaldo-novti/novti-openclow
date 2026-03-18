@@ -59,8 +59,8 @@ openclow/
 │   └── workflows/
 │       └── deploy.yml               # CI/CD (Build → GHCR → Coolify)
 ├── config/
-│   └── openclaw/
-│       └── openclaw.json            # Configuração mestre (Tokens/Bind)
+│   └── traefik/
+│       └── traefik.yml              # Configuração do Traefik (Prod)
 ├── monitoring/
 │   ├── prometheus/
 │   │   └── prometheus.yml           # Scrape configs
@@ -68,7 +68,7 @@ openclow/
 │       └── provisioning/
 │           └── datasources/
 │               └── datasource.yml   # Auto-provisioning Prometheus
-└── README.md
+└── README.md                        # Documentação Geral
 ```
 
 ---
