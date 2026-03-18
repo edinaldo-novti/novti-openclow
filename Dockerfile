@@ -47,5 +47,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -fs http://localhost:8080/healthz || exit 1
 
 # Comando de inicialização do Openclaw
-# Configurações são lidas preferencialmente de variáveis de ambiente
-CMD ["openclaw", "gateway", "--allow-unconfigured"]
+# Comando de inicialização do Openclaw
+# Forçamos a configuração correta e usamos 'exec' para que o Openclaw receba os sinais e logs corretamente
+CMD ["sh", "-c", "mkdir -p /root/.openclaw && echo '{\"gateway\":{\"bind\":\"lan\",\"port\":8080,\"controlUi\":{\"dangerouslyAllowHostHeaderOriginFallback\":true}}}' > /root/.openclaw/openclaw.json && exec openclaw gateway run --allow-unconfigured --port 8080 --bind lan --verbose"]
