@@ -48,5 +48,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Comando de inicialização do Openclaw
 # Comando de inicialização do Openclaw
-# Forçamos a configuração correta com suporte a proxy reverso (trustedProxies) e usamos 'exec'
-CMD ["sh", "-c", "mkdir -p /root/.openclaw && echo '{\"gateway\":{\"bind\":\"lan\",\"port\":8080,\"trustedProxies\":[\"127.0.0.1\",\"::1\",\"10.0.0.0/8\",\"172.16.0.0/12\",\"192.168.0.0/16\"],\"controlUi\":{\"dangerouslyAllowHostHeaderOriginFallback\":true}}}' > /root/.openclaw/openclaw.json && exec openclaw gateway run --allow-unconfigured --port 8080 --bind lan --verbose"]
+# Forçamos a configuração correta, incluindo o TOKEN vindo do ENV para evitar mismatch
+CMD ["sh", "-c", "mkdir -p /root/.openclaw && echo \"{\\\"gateway\\\":{\\\"bind\\\":\\\"lan\\\",\\\"port\\\":8080,\\\"token\\\":\\\"$OPENCLOW_GATEWAY_TOKEN\\\",\\\"trustedProxies\\\":[\\\"127.0.0.1\\\",\\\"::1\\\",\\\"10.0.0.0/8\\\",\\\"172.16.0.0/12\\\",\\\"192.168.0.0/16\\\"],\\\"controlUi\\\":{\\\"dangerouslyAllowHostHeaderOriginFallback\\\":true}}}\" > /root/.openclaw/openclaw.json && exec openclaw gateway run --allow-unconfigured --port 8080 --bind lan --verbose"]
