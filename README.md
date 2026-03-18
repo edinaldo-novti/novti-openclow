@@ -10,13 +10,13 @@
 ┌──────────────────────────────────────────────────────────────┐
 │                      Traefik (Gateway)                       │
 │                    :80 → :443 (TLS)                          │
-└─────┬───────────────────┬───────────────────┬────────────────┘
-      │                   │                   │
-      ▼                   ▼                   ▼
- ┌─────────┐        ┌─────────┐         ┌──────────┐
- │ Openflow│        │ Grafana │         │Prometheus│
- │  :8080  │        │  :3000  │         │  :9090   │
- └────┬────┘        └─────────┘         └──────────┘
+└─────┬────────────────────────────────────────────────────────┘
+      │
+      ▼
+ ┌─────────┐
+ │ Openflow│
+ │  :8080  │
+ └────┬────┘
       │
       └──── SQLite (Persistência Nativa via Volume)
 ```
@@ -27,9 +27,6 @@
 |-----------------|------------------------------|----------|
 | **Openflow**    | Plataforma principal (Gateway)| `8080`   |
 | **Traefik**     | Gateway / Reverse Proxy (Prod)| `80/443` |
-| **Prometheus**  | Coleta de métricas           | `9090`   |
-| **Grafana**     | Dashboards e visualização    | `3000`   |
-| **Portainer**   | UI Docker (Só Dev)           | `9443`   |
 
 ---
 
@@ -86,7 +83,7 @@ As variáveis mais importantes:
 |----------|-----------|--------|
 | `OPENCLOW_GATEWAY_TOKEN` | Token de acesso ao Gateway | ⚠️ Altere! |
 | `OPENFLOW_ADMIN_PASSWORD` | Senha administrativa | `Admin@Dev2026` |
-| `DOMAIN` | Domínio base (prod) | `clow.novti.com.br` |
+| `DOMAIN` | Domínio base (prod) | `ia.nogui.com.br` |
 
 ---
 
@@ -103,15 +100,15 @@ docker compose logs -f         # Ver logs
 ### Produção (Coolify)
 
 ```bash
-# OBRIGATÓRIO: Criar a rede 'proxy' no servidor ANTES do primeiro deploy
-docker network create proxy 2>/dev/null || true
+# OBRIGATÓRIO: Criar a rede 'coolify' no servidor ANTES do primeiro deploy
+docker network create coolify 2>/dev/null || true
 
 # Subir via terminal (ou via interface do Coolify)
 docker compose -f docker-compose.prod.yml up -d
 ```
 
 **Diferenças chave vs Dev:**
-- ✅ TLS automático via Let's Encrypt para `clow.novti.com.br`.
+- ✅ TLS automático via Let's Encrypt para `ia.nogui.com.br`.
 - ✅ Persistência definitiva de pareamento via volume `openclaw_data`.
 - ✅ Limites de recursos (CPU/Memória).
 

@@ -15,7 +15,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config/openclaw/openclaw.json:/root/.openclaw/openclaw.json:ro
+      - ./config/openclaw/openclaw.json:/root/.openclaw-config.json:ro
       - openclaw_data:/root/.openclaw
     environment:
       - NODE_ENV=development

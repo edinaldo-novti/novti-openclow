@@ -17,7 +17,7 @@ services:
     container_name: openclow-openflow
     restart: unless-stopped
     volumes:
-      - ./config/openclaw/openclaw.json:/root/.openclaw/openclaw.json:ro
+      - ./config/openclaw/openclaw.json:/root/.openclaw-config.json:ro
       - openclaw_data:/root/.openclaw
     environment:
       - NODE_ENV=production
@@ -43,11 +43,11 @@ services:
       start_period: 60s
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.openflow.rule=Host(`${OPENFLOW_DOMAIN:-clow.novti.com.br}`)"
+      - "traefik.http.routers.openflow.rule=Host(`${OPENFLOW_DOMAIN:-ia.nogui.com.br}`)"
       - "traefik.http.routers.openflow.entrypoints=websecure"
       - "traefik.http.routers.openflow.tls.certresolver=letsencrypt"
       - "traefik.http.services.openflow.loadbalancer.server.port=8080"
-      - "traefik.docker.network=proxy"
+      - "traefik.docker.network=coolify"
     logging:
       driver: "json-file"
       options:
