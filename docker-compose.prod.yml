@@ -10,6 +10,9 @@
 services:
   # ==================== Openflow ====================
   openflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: ${GHCR_IMAGE:-ghcr.io/edinaldo-novti/novti-openclow}:${IMAGE_TAG:-latest}
     container_name: openclow-openflow
     restart: unless-stopped
