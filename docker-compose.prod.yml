@@ -26,8 +26,7 @@ services:
       - OPENFLOW_ADMIN_PASSWORD=${OPENFLOW_ADMIN_PASSWORD}
 
     networks:
-      - openclow-internal
-      - proxy
+      - coolify
     deploy:
       resources:
         limits:
@@ -57,17 +56,7 @@ services:
 volumes:
   openclaw_data:
     driver: local
-  traefik_certs:
-    driver: local
-  traefik_logs:
-    driver: local
 
-# ==================== Networks ====================
 networks:
-  openclow-internal:
-    driver: bridge
-    name: openclow-internal
-    internal: true
-  proxy:
+  coolify:
     external: true
-    name: proxy

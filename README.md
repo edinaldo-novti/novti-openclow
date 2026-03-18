@@ -103,6 +103,9 @@ docker compose logs -f         # Ver logs
 ### Produção (Coolify)
 
 ```bash
+# OBRIGATÓRIO: Criar a rede 'proxy' no servidor ANTES do primeiro deploy
+docker network create proxy 2>/dev/null || true
+
 # Subir via terminal (ou via interface do Coolify)
 docker compose -f docker-compose.prod.yml up -d
 ```
