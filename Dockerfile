@@ -49,6 +49,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Comando de inicialização do Openclaw
 # Comando de inicialização do Openclaw
 # 1. Garante que o diretório existe
-# 2. Cria o openclaw.json APENAS se ele não existir (preserva pairings e estados em restarts)
-# 3. Inicia o gateway usando o token do ENV para garantir que sempre bata com o .env
-CMD ["sh", "-c", "mkdir -p /root/.openclaw && [ ! -f /root/.openclaw/openclaw.json ] && echo \"{\\\"gateway\\\":{\\\"bind\\\":\\\"lan\\\",\\\"port\\\":8080,\\\"auth\\\":{\\\"token\\\":\\\"$OPENCLOW_GATEWAY_TOKEN\\\"},\\\"trustedProxies\\\":[\\\"127.0.0.1\\\",\\\"::1\\\",\\\"10.0.0.0/8\\\",\\\"172.16.0.0/12\\\",\\\"192.168.0.0/16\\\"],\\\"controlUi\\\":{\\\"dangerouslyAllowHostHeaderOriginFallback\\\":true}}}\" > /root/.openclaw/openclaw.json; exec openclaw gateway run --allow-unconfigured --port 8080 --bind lan --token \"$OPENCLOW_GATEWAY_TOKEN\" --verbose"]
+# 2. Cria o openclaw.json APENAS se ele não existir
+# 3. Adicionada a flag 'dangerouslyDisableDeviceAuth' para permitir acesso direto do Dashboard sem o passo manual de pairing (necessário em alguns setups de proxy)
+CMD ["sh", "-c", "mkdir -p /root/.openclaw && [ ! -f /root/.openclaw/openclaw.json ] && echo \"{\\\"gateway\\\":{\\\"bind\\\":\\\"lan\\\",\\\"port\\\":8080,\\\"auth\\\":{\\\"token\\\":\\\"$OPENCLOW_GATEWAY_TOKEN\\\"},\\\"trustedProxies\\\":[\\\"127.0.0.1\\\",\\\"::1\\\",\\\"10.0.0.0/8\\\",\\\"172.16.0.0/12\\\",\\\"192.168.0.0/16\\\"],\\\"controlUi\\\":{\\\"dangerouslyAllowHostHeaderOriginFallback\\\":true,\\\"dangerouslyDisableDeviceAuth\\\":true}}}\" > /root/.openclaw/openclaw.json; exec openclaw gateway run --allow-unconfigured --port 8080 --bind lan --token \"$OPENCLOW_GATEWAY_TOKEN\" --verbose"]
