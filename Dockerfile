@@ -46,10 +46,11 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -fs http://localhost:8080/healthz || exit 1
 
-# 4. Copia a configuração padrão para o diretório de dados do OpenClaw
-# O arquivo fixo previne erros de schema e facilita a manutenção
-COPY openclaw.json /root/.openclaw/openclaw.json
+# 4. Copia a configuração padrão para um diretório temporário
+COPY openclaw.json /app/openclaw.json
 
 # Comando de inicialização do Openclaw
-# Usamos o token do ENV para override dinâmico no startup
-CMD ["sh", "-c", "openclaw gateway run --allow-unconfigured --port 8080 --bind lan --token \"$OPENCLOW_GATEWAY_TOKEN\" --verbose"]
+# 1. Garante que o diretório de dados existe
+# 2. Se o arquivo já existir no volume, roda o 'doctor --fix' para remover chaves depreciadas (como models.primary)
+# 3. Se NÃO existir, copia o arquivo padrão do projeto
+CMD ["sh", "-c", "mkdir -p /root/.openclaw && if [ -f /root/.openclaw/openclaw.json ]; then openclaw doctor --fix --yes; else cp /app/openclaw.json /root/.openclaw/openclaw.json; fi; exec openclaw gateway run --allow-unconfigured --port 8080 --bind lan --token \"$OPENCLOW_GATEWAY_TOKEN\" --verbose"]
