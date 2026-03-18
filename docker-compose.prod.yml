@@ -10,7 +10,7 @@
 services:
   # ==================== Openflow ====================
   openflow:
-    image: ${GHCR_IMAGE:-ghcr.io/your-org/openclow}:${IMAGE_TAG:-latest}
+    image: ${GHCR_IMAGE:-ghcr.io/edinaldo-novti/novti-openclow}:${IMAGE_TAG:-latest}
     container_name: openclow-openflow
     restart: unless-stopped
     volumes:

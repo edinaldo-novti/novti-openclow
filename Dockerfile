@@ -5,7 +5,7 @@
 FROM ubuntu:22.04
 
 LABEL maintainer="OpenClow Team"
-LABEL org.opencontainers.image.source="https://github.com/your-org/openclow"
+LABEL org.opencontainers.image.source="https://github.com/edinaldo-novti/novti-openclow"
 LABEL org.opencontainers.image.description="OpenClow — Instalado via script oficial na base Ubuntu"
 
 # Configurações não-interativas para evitar prompts no apt

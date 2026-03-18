@@ -37,7 +37,7 @@
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/your-org/openclow.git && cd openclow
+git clone https://github.com/edinaldo-novti/novti-openclow.git && cd openclow
 
 # 2. Configure o ambiente
 cp .env.example .env
