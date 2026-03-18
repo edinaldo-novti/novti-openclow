@@ -17,7 +17,7 @@ services:
     container_name: openclow-openflow
     restart: unless-stopped
     volumes:
-      - ./config/openclaw/openclaw.json:/root/.openclaw-config.json:ro
+      - ./config/openclaw:/root/initial-config:ro
       - openclaw_data:/root/.openclaw
     environment:
       - NODE_ENV=production
