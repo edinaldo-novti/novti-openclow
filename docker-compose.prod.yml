@@ -1,0 +1,113 @@
+# ============================================================
+# OpenClow — Docker Compose (Produção / Coolify-Friendly)
+# ============================================================
+# Requisitos:
+#   - Arquivo .env configurado com todas as variáveis
+#   - Rede externa 'proxy' criada pelo Traefik/Coolify
+# Uso: docker compose -f docker-compose.prod.yml up -d
+# ============================================================
+
+services:
+  # ==================== Openflow ====================
+  openflow:
+    image: ${GHCR_IMAGE:-ghcr.io/your-org/openclow}:${IMAGE_TAG:-latest}
+    container_name: openclow-openflow
+    restart: unless-stopped
+    volumes:
+      - ./config/openclaw/openclaw.json:/root/.openclaw/openclaw.json:ro
+      - openclaw_data:/root/.openclaw
+    environment:
+      - NODE_ENV=production
+      - PORT=${OPENFLOW_PORT:-8080}
+      - OPENCLOW_GATEWAY_TOKEN=${OPENCLOW_GATEWAY_TOKEN}
+      - OPENFLOW_ADMIN_PASSWORD=${OPENFLOW_ADMIN_PASSWORD}
+
+    networks:
+      - openclow-internal
+      - proxy
+    deploy:
+      resources:
+        limits:
+          cpus: "${OPENFLOW_CPU_LIMIT:-1.0}"
+          memory: ${OPENFLOW_MEMORY_LIMIT:-1g}
+        reservations:
+          cpus: "0.25"
+          memory: 256m
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openflow.rule=Host(`${OPENFLOW_DOMAIN:-clow.novti.com.br}`)"
+      - "traefik.http.routers.openflow.entrypoints=websecure"
+      - "traefik.http.routers.openflow.tls.certresolver=letsencrypt"
+      - "traefik.http.services.openflow.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+
+  # ==================== Monitoring ====================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: openclow-prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - openclow-internal
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN:-clow.novti.com.br}`)"
+      - "traefik.http.routers.prometheus.entrypoints=websecure"
+      - "traefik.http.routers.prometheus.tls.certresolver=letsencrypt"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.docker.network=proxy"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: openclow-grafana
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+      - grafana_data:/var/lib/grafana
+    networks:
+      - openclow-internal
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN:-clow.novti.com.br}`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+    restart: unless-stopped
+
+volumes:
+  openclaw_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  traefik_certs:
+    driver: local
+  traefik_logs:
+    driver: local
+
+# ==================== Networks ====================
+networks:
+  openclow-internal:
+    driver: bridge
+    name: openclow-internal
+    internal: true
+  proxy:
+    external: true
+    name: proxy

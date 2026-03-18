@@ -1,0 +1,91 @@
+# ============================================================
+# OpenClow — Docker Compose (Desenvolvimento)
+# ============================================================
+# Uso: docker compose up -d
+# ============================================================
+
+services:
+  # ==================== Openflow ====================
+  openflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openclow-openflow
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/openclaw/openclaw.json:/root/.openclaw/openclaw.json:ro
+      - openclaw_data:/root/.openclaw
+    environment:
+      - NODE_ENV=development
+      - PORT=${OPENFLOW_PORT:-8080}
+      - OPENCLOW_GATEWAY_TOKEN=${OPENCLOW_GATEWAY_TOKEN}
+      - OPENFLOW_ADMIN_PASSWORD=${OPENFLOW_ADMIN_PASSWORD}
+
+    networks:
+      - openclow-dev
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+
+
+
+  # ==================== Monitoring ====================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: openclow-prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - openclow-dev
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: openclow-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+      - grafana_data:/var/lib/grafana
+    networks:
+      - openclow-dev
+    restart: unless-stopped
+
+  # ==================== Management ====================
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: openclow-portainer
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - openclow-dev
+    restart: unless-stopped
+
+# ==================== Networks ====================
+networks:
+  openclow-dev:
+    driver: bridge
+    name: openclow-dev
+
+volumes:
+  openclaw_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  portainer_data:
+    driver: local

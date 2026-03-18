@@ -1,0 +1,16 @@
+{
+  "gateway": {
+    "port": 8080,
+    "bind": "lan",
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLOW_GATEWAY_TOKEN}"
+    },
+    "controlUi": {
+      "dangerouslyAllowHostHeaderOriginFallback": true
+    }
+  },
+  "logging": {
+    "level": "info"
+  }
+}
